@@ -4,7 +4,7 @@
   slug:        gymops
   prime:       29
   master:      sjgant80-hub/gymos (prime 23)
-  built:       2026-06-05T00:48:34.604Z
+  built:       2026-06-05T00:49:58.958Z
   trial:       unsigned · set KONOMI_PRIVATE_KEY to mint
 -->
 <!DOCTYPE html>
@@ -2849,13 +2849,13 @@ function calcROI() {
 function showApp() {
   document.getElementById('landingWrapper').classList.add('hidden');
   document.getElementById('appWrapper').classList.add('active');
-  window.scroll(0, 0); // scrollTo helper shadowed at line 2642 · scroll() unshadowed alias
+  window.scroll(0, 0); // use scroll() · helper goToSection() exists but window.scrollTo is safer here
 }
 
 function exitApp() {
   document.getElementById('landingWrapper').classList.remove('hidden');
   document.getElementById('appWrapper').classList.remove('active');
-  window.scroll(0, 0); // scrollTo helper shadowed at line 2642 · scroll() unshadowed alias
+  window.scroll(0, 0); // use scroll() · helper goToSection() exists but window.scrollTo is safer here
 }
 
 function switchAppTab(tab, el) {
@@ -3836,7 +3836,11 @@ async function postContent() {
     }
   } else {
     toast('Connect Facebook in Settings to post directly. Content copied to clipboard.', 'error');
-    navigator.clipboard.writeText(content);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(content).catch(() => {});
+      }
+    } catch (_) {}
   }
 }
 
