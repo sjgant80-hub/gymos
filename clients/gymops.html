@@ -4,7 +4,7 @@
   slug:        gymops
   prime:       29
   master:      sjgant80-hub/gymos (prime 23)
-  built:       2026-06-05T00:47:17.270Z
+  built:       2026-06-05T00:48:34.604Z
   trial:       unsigned · set KONOMI_PRIVATE_KEY to mint
 -->
 <!DOCTYPE html>
@@ -3455,7 +3455,7 @@ function toggleApiCard(card, evt) {
 
 // ═══════════ API KEY MANAGEMENT ═══════════
 function saveApiKey(provider) {
-  event.stopPropagation();
+  if (typeof event !== 'undefined' && event && event.stopPropagation) event.stopPropagation();
   const keys = state.apiKeys;
 
   switch (provider) {
@@ -3514,7 +3514,7 @@ function setStatus(id, connected) {
 
 // ═══════════ API TEST FUNCTIONS ═══════════
 async function testApiKey(provider) {
-  event.stopPropagation();
+  if (typeof event !== 'undefined' && event && event.stopPropagation) event.stopPropagation();
   const keys = state.apiKeys;
   toast('Testing connection...', 'success');
 
@@ -3569,7 +3569,7 @@ async function testApiKey(provider) {
 }
 
 async function testMetaConnection() {
-  event.stopPropagation();
+  if (typeof event !== 'undefined' && event && event.stopPropagation) event.stopPropagation();
   const k = state.apiKeys;
   if (!k.metaToken || !k.metaPageId) { toast('Enter token and Page ID first', 'error'); return; }
   toast('Testing Meta connection...', 'success');
@@ -3588,7 +3588,7 @@ async function testMetaConnection() {
 }
 
 async function testGoogleConnection() {
-  event.stopPropagation();
+  if (typeof event !== 'undefined' && event && event.stopPropagation) event.stopPropagation();
   const k = state.apiKeys;
   if (!k.googleClientId || !k.googleRefresh) { toast('Enter OAuth credentials first', 'error'); return; }
   // Exchange refresh token for access token
@@ -3612,7 +3612,7 @@ async function testGoogleConnection() {
 }
 
 async function testWhatsAppConnection() {
-  event.stopPropagation();
+  if (typeof event !== 'undefined' && event && event.stopPropagation) event.stopPropagation();
   const k = state.apiKeys;
   if (!k.whatsappToken || !k.whatsappPhoneId) { toast('Enter token and Phone ID first', 'error'); return; }
   toast('Testing WhatsApp connection...', 'success');
@@ -3631,7 +3631,7 @@ async function testWhatsAppConnection() {
 }
 
 async function testEmailConnection() {
-  event.stopPropagation();
+  if (typeof event !== 'undefined' && event && event.stopPropagation) event.stopPropagation();
   const k = state.apiKeys;
   if (!k.emailApi) { toast('Enter SendGrid API key first', 'error'); return; }
   toast('Testing email connection...', 'success');
