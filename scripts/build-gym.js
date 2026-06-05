@@ -134,6 +134,16 @@ function buildGym(configPath) {
     html = html.replace('</style>', hideCss + '</style>');
   }
 
+  // 4d) EU AI Act audit shim · re-tag data-tool to this gym's slug
+  //     If master has no shim (legacy), inject one. Either way the tag tracks the gym.
+  var shimRegex = /<script[^>]*audit-shim\.js[^>]*><\/script>/;
+  var shimTag = `<script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="${esc(cfg.slug)}" data-tier="minimal" defer></script>`;
+  if (shimRegex.test(html)) {
+    html = html.replace(shimRegex, shimTag);
+  } else {
+    html = html.replace('</style>', `</style>\n<!-- ◊·κ=1 · EU AI Act Article 12 audit shim · per-gym tool tag -->\n${shimTag}`);
+  }
+
   // 4b) Landing page branding — hero + tagline + nav logo
   if (cfg.gym_name) {
     // Hero headline

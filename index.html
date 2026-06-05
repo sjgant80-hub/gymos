@@ -852,7 +852,7 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
 /* GymOps · Konomi/KCC badges hidden by default · shim code preserved · re-enable via CSS removal */
 #kcc-badge,#konomi-badge{display:none !important;}
 </style>
-  <script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="gymos-export" data-tier="minimal" defer></script>
+  <script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="gymos" data-tier="minimal" defer></script>
 </head>
 <body>
 <!-- ═══════════════════════════════════════════════════════════════
@@ -888,7 +888,7 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
       and keep members coming back. All for less than one part-time hire.
     </p>
     <div class="hero-actions">
-      <button class="btn-primary" onclick="scrollTo('#configurator')">Build Your Gym Setup →</button>
+      <button class="btn-primary" onclick="goToSection('#configurator')">Build Your Gym Setup →</button>
       <button class="btn-secondary" onclick="showApp()">See It Working</button>
     </div>
     <div class="hero-proof">
@@ -1441,7 +1441,7 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
           <li>12 months of updates</li>
           <li>Community support</li>
         </ul>
-        <button class="pricing-btn pricing-btn-outline" onclick="scrollTo('#pilot')">Start Pilot →</button>
+        <button class="pricing-btn pricing-btn-outline" onclick="goToSection('#pilot')">Start Pilot →</button>
       </div>
 
       <!-- PRO -->
@@ -1460,7 +1460,7 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
           <li>Priority email support (24hr)</li>
           <li>Quarterly strategy review</li>
         </ul>
-        <button class="pricing-btn pricing-btn-primary" onclick="scrollTo('#pilot')">Start Pilot →</button>
+        <button class="pricing-btn pricing-btn-primary" onclick="goToSection('#pilot')">Start Pilot →</button>
       </div>
 
       <!-- ENTERPRISE -->
@@ -1478,7 +1478,7 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
           <li>SLA with 4-hour response</li>
           <li>On-site or video training</li>
         </ul>
-        <button class="pricing-btn pricing-btn-outline" onclick="scrollTo('#pilot')">Talk to Us →</button>
+        <button class="pricing-btn pricing-btn-outline" onclick="goToSection('#pilot')">Talk to Us →</button>
       </div>
 
       <!-- MANAGED -->
@@ -1509,7 +1509,7 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
           <li>Dedicated success manager</li>
           <li>Weekly performance reports</li>
         </ul>
-        <button class="pricing-btn pricing-btn-primary" onclick="scrollTo('#pilot')">Start Pilot →</button>
+        <button class="pricing-btn pricing-btn-primary" onclick="goToSection('#pilot')">Start Pilot →</button>
       </div>
 
     </div>
@@ -1652,12 +1652,12 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
 <nav class="app-nav">
   <div class="app-nav-logo">Gym<span class="dot">Ops</span></div>
   <div class="app-tabs">
-    <div class="app-tab active" onclick="switchAppTab('dashboard')"><span class="app-tab-icon">📊</span> Dashboard</div>
-    <div class="app-tab" onclick="switchAppTab('content')"><span class="app-tab-icon">✍️</span> Content</div>
-    <div class="app-tab" onclick="switchAppTab('leads')"><span class="app-tab-icon">📥</span> Leads</div>
-    <div class="app-tab" onclick="switchAppTab('schedule')"><span class="app-tab-icon">📅</span> Schedule</div>
-    <div class="app-tab" onclick="switchAppTab('onboarding')"><span class="app-tab-icon">🚀</span> Onboarding</div>
-    <div class="app-tab" onclick="switchAppTab('settings')"><span class="app-tab-icon">⚙️</span> Settings</div>
+    <div class="app-tab active" onclick="switchAppTab('dashboard', this)"><span class="app-tab-icon">📊</span> Dashboard</div>
+    <div class="app-tab" onclick="switchAppTab('content', this)"><span class="app-tab-icon">✍️</span> Content</div>
+    <div class="app-tab" onclick="switchAppTab('leads', this)"><span class="app-tab-icon">📥</span> Leads</div>
+    <div class="app-tab" onclick="switchAppTab('schedule', this)"><span class="app-tab-icon">📅</span> Schedule</div>
+    <div class="app-tab" onclick="switchAppTab('onboarding', this)"><span class="app-tab-icon">🚀</span> Onboarding</div>
+    <div class="app-tab" onclick="switchAppTab('settings', this)"><span class="app-tab-icon">⚙️</span> Settings</div>
   </div>
   <button class="app-exit" onclick="exitApp()">← Back to Site</button>
 </nav>
@@ -1998,23 +1998,23 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
     <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:20px;">Settings</h2>
     <div class="settings-grid">
       <div class="settings-menu">
-        <div class="settings-menu-item active" onclick="switchSettings('gym')">🏋️ Gym Profile</div>
-        <div class="settings-menu-item" onclick="switchSettings('socials')">🔗 Social Links</div>
-        <div class="settings-menu-item" onclick="switchSettings('ai')">🤖 AI Engine</div>
-        <div class="settings-menu-item" onclick="switchSettings('meta')">📱 Facebook &amp; Instagram</div>
-        <div class="settings-menu-item" onclick="switchSettings('tiktok')">🎵 TikTok</div>
-        <div class="settings-menu-item" onclick="switchSettings('youtube')">▶️ YouTube</div>
-        <div class="settings-menu-item" onclick="switchSettings('linkedin')">💼 LinkedIn</div>
-        <div class="settings-menu-item" onclick="switchSettings('google')">🔍 Google My Business</div>
-        <div class="settings-menu-item" onclick="switchSettings('whatsapp')">💬 WhatsApp</div>
-        <div class="settings-menu-item" onclick="switchSettings('sms')">📲 SMS / Twilio</div>
-        <div class="settings-menu-item" onclick="switchSettings('email')">📧 Email Provider</div>
-        <div class="settings-menu-item" onclick="switchSettings('crm')">📋 CRM</div>
-        <div class="settings-menu-item" onclick="switchSettings('booking')">📅 Booking System</div>
-        <div class="settings-menu-item" onclick="switchSettings('phone')">📞 Phone AI</div>
-        <div class="settings-menu-item" onclick="switchSettings('analytics')">📊 Analytics &amp; Pixel</div>
-        <div class="settings-menu-item" onclick="switchSettings('reviews')">⭐ Reviews</div>
-        <div class="settings-menu-item" onclick="switchSettings('webhooks')">🪝 Webhooks</div>
+        <div class="settings-menu-item active" onclick="switchSettings('gym', this)">🏋️ Gym Profile</div>
+        <div class="settings-menu-item" onclick="switchSettings('socials', this)">🔗 Social Links</div>
+        <div class="settings-menu-item" onclick="switchSettings('ai', this)">🤖 AI Engine</div>
+        <div class="settings-menu-item" onclick="switchSettings('meta', this)">📱 Facebook &amp; Instagram</div>
+        <div class="settings-menu-item" onclick="switchSettings('tiktok', this)">🎵 TikTok</div>
+        <div class="settings-menu-item" onclick="switchSettings('youtube', this)">▶️ YouTube</div>
+        <div class="settings-menu-item" onclick="switchSettings('linkedin', this)">💼 LinkedIn</div>
+        <div class="settings-menu-item" onclick="switchSettings('google', this)">🔍 Google My Business</div>
+        <div class="settings-menu-item" onclick="switchSettings('whatsapp', this)">💬 WhatsApp</div>
+        <div class="settings-menu-item" onclick="switchSettings('sms', this)">📲 SMS / Twilio</div>
+        <div class="settings-menu-item" onclick="switchSettings('email', this)">📧 Email Provider</div>
+        <div class="settings-menu-item" onclick="switchSettings('crm', this)">📋 CRM</div>
+        <div class="settings-menu-item" onclick="switchSettings('booking', this)">📅 Booking System</div>
+        <div class="settings-menu-item" onclick="switchSettings('phone', this)">📞 Phone AI</div>
+        <div class="settings-menu-item" onclick="switchSettings('analytics', this)">📊 Analytics &amp; Pixel</div>
+        <div class="settings-menu-item" onclick="switchSettings('reviews', this)">⭐ Reviews</div>
+        <div class="settings-menu-item" onclick="switchSettings('webhooks', this)">🪝 Webhooks</div>
       </div>
       <div class="settings-content">
 
@@ -2054,7 +2054,7 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
           <h3>AI Engine</h3>
           <p>Connect an AI provider to power your team. You need at least one API key.</p>
 
-          <div class="api-card" onclick="toggleApiCard(this)">
+          <div class="api-card" onclick="toggleApiCard(this, event)">
             <div class="api-card-header">
               <div class="api-card-left">
                 <div class="api-card-icon ai">◊</div>
@@ -2087,7 +2087,7 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
             </div>
           </div>
 
-          <div class="api-card" onclick="toggleApiCard(this)">
+          <div class="api-card" onclick="toggleApiCard(this, event)">
             <div class="api-card-header">
               <div class="api-card-left">
                 <div class="api-card-icon ai" style="background:#e8f5e9;">🟢</div>
@@ -2655,10 +2655,13 @@ const state = {
 };
 
 // ═══════════ NAV ═══════════
-function scrollTo(selector) {
+// note: rename from scrollTo() to avoid Element.prototype.scrollTo shadowing in inline onclick handlers
+function goToSection(selector) {
   const el = document.querySelector(selector);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+// keep old name as alias for any external callers
+window.scrollToSection = goToSection;
 
 function toggleMobileNav() {
   const links = document.querySelector('.nav-links');
@@ -2840,11 +2843,16 @@ function exitApp() {
   window.scroll(0, 0); // scrollTo helper shadowed at line 2642 · scroll() unshadowed alias
 }
 
-function switchAppTab(tab) {
+function switchAppTab(tab, el) {
   document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.app-panel').forEach(p => p.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  document.getElementById('panel-' + tab).classList.add('active');
+  // resolve target · prefer explicit el · fall back to event.currentTarget (live click) · then query
+  const target = el
+    || (typeof event !== 'undefined' && event && event.currentTarget)
+    || document.querySelector(`.app-tab[onclick*="switchAppTab('${tab}'"]`);
+  if (target && target.classList) target.classList.add('active');
+  const panel = document.getElementById('panel-' + tab);
+  if (panel) panel.classList.add('active');
   if (tab === 'onboarding') obRender();
 }
 
@@ -3345,11 +3353,15 @@ function obDownload(name, content, type) {
 // Boot onboarding state on load
 obLoad();
 
-function switchSettings(section) {
+function switchSettings(section, el) {
   document.querySelectorAll('.settings-menu-item').forEach(m => m.classList.remove('active'));
   document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  document.getElementById('settings-' + section).classList.add('active');
+  const target = el
+    || (typeof event !== 'undefined' && event && event.currentTarget)
+    || document.querySelector(`.settings-menu-item[onclick*="switchSettings('${section}'"]`);
+  if (target && target.classList) target.classList.add('active');
+  const sect = document.getElementById('settings-' + section);
+  if (sect) sect.classList.add('active');
   hydrateConnectionFields();
 }
 
@@ -3420,8 +3432,9 @@ function updateConnectionBadges() {
 document.addEventListener('DOMContentLoaded', () => setTimeout(() => { hydrateConnectionFields(); }, 100));
 
 // ═══════════ API CARDS ═══════════
-function toggleApiCard(card) {
-  if (event.target.closest('.api-form') || event.target.closest('.api-btn')) return;
+function toggleApiCard(card, evt) {
+  const e = evt || (typeof event !== 'undefined' && event) || null;
+  if (e && e.target && (e.target.closest('.api-form') || e.target.closest('.api-btn'))) return;
   card.classList.toggle('expanded');
 }
 
@@ -3744,7 +3757,23 @@ function adaptContent(platform) {
 function copyContent() {
   const content = document.getElementById('contentOutput').value;
   if (!content) { toast('Nothing to copy', 'error'); return; }
-  navigator.clipboard.writeText(content).then(() => toast('Copied to clipboard', 'success'));
+  const ok = () => toast('Copied to clipboard', 'success');
+  const fallback = () => {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = content; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      ok();
+    } catch (_) {
+      toast('Copy failed · select text manually', 'error');
+    }
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(content).then(ok).catch(fallback);
+  } else {
+    fallback();
+  }
 }
 
 function scheduleContent() {
