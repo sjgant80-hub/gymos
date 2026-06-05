@@ -144,6 +144,68 @@ function buildGym(configPath) {
     html = html.replace('</style>', `</style>\n<!-- ◊·κ=1 · EU AI Act Article 12 audit shim · per-gym tool tag -->\n${shimTag}`);
   }
 
+  // 4e) Doctrine strip — hide Fall*/Konomi internal markers from client-facing copy.
+  //     Master keeps them (Simon's reference). Client build strips by default.
+  //     Set `internal_visible: true` in config to re-enable (Simon's own deployments).
+  if (cfg.internal_visible !== true) {
+    // 4e.i — footer seed: ◊·κ=1 · 8+1 MACCubeFACE · Ω⊃{α,β,γ,δ,ε,ζ,η,θ} · Ψ=0.59 · seed v17 · sovereign
+    html = html.replace(
+      /<div class="footer-seed">[\s\S]*?<\/div>/,
+      `<div class="footer-seed">© ${new Date().getFullYear()} ${esc(cfg.gym_name || 'GymOps')} · all rights reserved</div>`
+    );
+    // 4e.ii — "Sovereign Build" → "Branded Build" in hero badge
+    html = html.replace(/· Sovereign Build ·/g, '· Branded Build ·');
+    // 4e.iii — team card · "Omega" → "Director" + drop the Ω symbol
+    //          team-role "Orchestrator · The Boss" → "The Director · runs the team"
+    html = html.replace(/<h3>Omega<\/h3>/g, '<h3>Director</h3>');
+    html = html.replace(/<h3>Omega · Ω · The Orchestrator<\/h3>/g, '<h3>The Director</h3>');
+    html = html.replace(/<div class="team-role">Orchestrator · The Boss<\/div>/g,
+      '<div class="team-role">Runs the whole AI team</div>');
+    // 4e.iv — strip Greek-letter prefix from team-role chips
+    //          "α · Lead Capture" → "Lead Capture"  · same for β γ δ ε ζ η θ
+    html = html.replace(
+      /<div class="team-role">[αβγδεζηθ]\s*·\s*([^<]+)<\/div>/g,
+      '<div class="team-role">$1</div>'
+    );
+    // 4e.v — strip Greek-letter prefix from team-detail-header h3 (e.g. "Front Desk · α" → "Front Desk")
+    html = html.replace(
+      /<h3>([^<]+?)\s*·\s*[αβγδεζηθ]<\/h3>/g,
+      '<h3>$1</h3>'
+    );
+    // 4e.vi — comment markers in markup (e.g. <!-- Ω Orchestrator -->) · view-source only but stripping anyway
+    html = html.replace(/<!--\s*Ω[^>]*-->/g, '<!-- Director -->');
+    html = html.replace(/<!--\s*[αβγδεζηθ][^>]*-->/g, '<!-- specialist -->');
+    // 4e.vii — section header sub-text (every variant of "orchestrator that...")
+    html = html.replace(
+      /Eight specialists and one orchestrator/g,
+      'Eight specialists and one director'
+    );
+    // 4e.viii — team-tasks bullet points · "the orchestrator never sleeps" etc.
+    html = html.replace(/\bthe orchestrator\b/g, 'the director');
+    html = html.replace(/\borchestrator\b/g, 'director');
+    // 4e.ix — hero-badge "Sovereign Build" (runs after 4b which sets the badge)
+    html = html.replace(/· Sovereign Build ·/g, '· Branded Build ·');
+    // 4e.x — Team Detail Role for Omega · "the brain of your AI team"
+    html = html.replace(
+      /<div class="team-detail-role">Routes, decides, governs — the brain of your AI team<\/div>/g,
+      '<div class="team-detail-role">Runs the team · routes work · keeps things moving</div>'
+    );
+    // 4e.xi — strip MACCubeFACE from comments (HTML + JS) · view-source safe
+    html = html.replace(/8\+1 MACCubeFACE/g, 'team coordination');
+    html = html.replace(/MACCubeFACE/g, 'agent-grid');
+    // 4e.xii — strip the Ω⊃{α,β,γ,δ,ε,ζ,η,θ} doctrine line from JS comments
+    html = html.replace(/Ω⊃\{[αβγδεζηθ,\s]+\}:?/g, 'director + 8 specialists:');
+    // 4e.xiii — strip "L2 SWARM" markers (Fall* layer doctrine)
+    html = html.replace(/L2 SWARM/g, 'AI team');
+    // 4e.xiv — comment strip · "v17 seed · L6 SKIN" etc. in nested multi-line comments
+    html = html.replace(/v17 seed[^\n]*\n/g, 'per-gym build\n');
+    html = html.replace(/◊ seed v17 · L6 SKIN layer/g, 'per-gym build');
+    // 4e.xv — strip the architecture comment block doctrine
+    html = html.replace(/ARCHITECTURE \(v17 seed[^)]*\)/g, 'ARCHITECTURE (internal notes)');
+    // 4e.xvi — strip remaining lifecycle layer notation L1/L2/L3 etc references
+    html = html.replace(/L\d+ (FACE|SWARM|CASCADE|BLOOM|PERSIST|SKIN|ASS) ·?\s?/g, '');
+  }
+
   // 4b) Landing page branding — hero + tagline + nav logo
   if (cfg.gym_name) {
     // Hero headline
@@ -152,9 +214,11 @@ function buildGym(configPath) {
       `<h1>${esc(cfg.gym_name)} Gets<br>a <span class="highlight">Full AI Team</span></h1>`
     );
     // Hero badge: Now in Pilot Programme → Branded Build
+    // (use "Branded Build" not "Sovereign Build" — sovereign is internal doctrine)
+    var badgeKind = (cfg.internal_visible === true) ? 'Sovereign Build' : 'Branded Build';
     html = html.replace(
       /<div class="hero-badge">◊ Now in Pilot Programme<\/div>/,
-      `<div class="hero-badge">◊ ${esc(cfg.gym_name)} · Sovereign Build · Prime ${prime}</div>`
+      `<div class="hero-badge">◊ ${esc(cfg.gym_name)} · ${badgeKind} · Prime ${prime}</div>`
     );
     // Landing nav: <div class="nav-logo">Gym<span class="dot">OS</span></div>
     var navText = cfg.gym_logo_text || cfg.gym_name;
