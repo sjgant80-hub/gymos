@@ -1302,21 +1302,21 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
       <!-- Step 2: Size -->
       <div class="config-panel" id="cPanel1">
         <h3>How big is your operation?</h3>
-        <p>We'll size the AI team recommendations to match.</p>
+        <p>Tap all that apply · most gyms span more than one size profile across sites and seasons.</p>
         <div class="config-options">
-          <div class="config-option" onclick="selectConfig(1, this, 'solo')">
+          <div class="config-option" onclick="toggleConfigType(1, this, 'solo')">
             <h4>🧑 Just Me</h4>
             <p>Solo operator, every hat is my hat</p>
           </div>
-          <div class="config-option" onclick="selectConfig(1, this, 'small')">
+          <div class="config-option" onclick="toggleConfigType(1, this, 'small')">
             <h4>👥 Small Team (2-5 staff)</h4>
             <p>A few trainers or instructors</p>
           </div>
-          <div class="config-option" onclick="selectConfig(1, this, 'medium')">
+          <div class="config-option" onclick="toggleConfigType(1, this, 'medium')">
             <h4>🏠 Medium (6-15 staff)</h4>
             <p>Established gym with growing team</p>
           </div>
-          <div class="config-option" onclick="selectConfig(1, this, 'large')">
+          <div class="config-option" onclick="toggleConfigType(1, this, 'large')">
             <h4>🏢 Large (15+ staff)</h4>
             <p>Multi-site or large facility</p>
           </div>
@@ -1330,29 +1330,29 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; font-weight: 800; }
       <!-- Step 3: Biggest Problem -->
       <div class="config-panel" id="cPanel2">
         <h3>What's your biggest headache right now?</h3>
-        <p>Pick one. We'll prioritise your AI team around it.</p>
+        <p>Tap all that apply. We'll prioritise your AI team around them.</p>
         <div class="config-options">
-          <div class="config-option" onclick="selectConfig(2, this, 'leads')">
+          <div class="config-option" onclick="toggleConfigType(2, this, 'leads')">
             <h4>📥 Getting New Leads</h4>
             <p>I need more people through the door</p>
           </div>
-          <div class="config-option" onclick="selectConfig(2, this, 'followup')">
+          <div class="config-option" onclick="toggleConfigType(2, this, 'followup')">
             <h4>📞 Following Up Leads</h4>
             <p>I get enquiries but don't convert enough</p>
           </div>
-          <div class="config-option" onclick="selectConfig(2, this, 'retention')">
+          <div class="config-option" onclick="toggleConfigType(2, this, 'retention')">
             <h4>🚪 Keeping Members</h4>
             <p>Too many people cancel after a few months</p>
           </div>
-          <div class="config-option" onclick="selectConfig(2, this, 'content')">
+          <div class="config-option" onclick="toggleConfigType(2, this, 'content')">
             <h4>📱 Content &amp; Social Media</h4>
             <p>I never have time to post consistently</p>
           </div>
-          <div class="config-option" onclick="selectConfig(2, this, 'admin')">
+          <div class="config-option" onclick="toggleConfigType(2, this, 'admin')">
             <h4>📋 Admin Overload</h4>
             <p>I spend more time on admin than training</p>
           </div>
-          <div class="config-option" onclick="selectConfig(2, this, 'all')">
+          <div class="config-option" onclick="toggleConfigType(2, this, 'all')">
             <h4>🔥 All of the Above</h4>
             <p>Honestly, everything needs help</p>
           </div>
@@ -2649,7 +2649,10 @@ const state = {
   gymProfile: recall('gym_profile', { name: '', desc: '', icp: '', voice: 'friendly' }),
   apiKeys: recall('api_keys', {}),
   configStep: 0,
-  configChoices: [[], null, null],  // step 0 is multi-select (array) · steps 1-2 single-select
+  // FIX-LOCK · all 3 client-selection steps are multi-select arrays
+  // step 0 = programmes · step 1 = size profiles · step 2 = headaches
+  // gym owners pick all that apply on every step (was: only step 0 multi)
+  configChoices: [[], [], []],
   leads: recall('leads', []),
   posts: recall('posts', [])
 };
@@ -2705,13 +2708,15 @@ function toggleConfigType(step, el, value) {
 }
 
 function configNext() {
+  // FIX-LOCK · all 3 steps are arrays · validate non-empty before advancing
   if (state.configStep < 3) {
     const choice = state.configChoices[state.configStep];
-    const empty = (state.configStep === 0)
-      ? (!Array.isArray(choice) || choice.length === 0)
-      : !choice;
+    const empty = !Array.isArray(choice) || choice.length === 0;
     if (empty) {
-      toast(state.configStep === 0 ? 'Please tap one or more programmes' : 'Please select an option', 'error');
+      const msg = state.configStep === 0 ? 'Tap one or more programmes'
+                : state.configStep === 1 ? 'Tap one or more size profiles'
+                : 'Tap one or more headaches';
+      toast(msg, 'error');
       return;
     }
     state.configStep++;
@@ -2738,36 +2743,55 @@ function updateConfigUI() {
 }
 
 function buildConfigResult() {
-  const [gymTypeRaw, size, problem] = state.configChoices;
+  // FIX-LOCK · all 3 steps are arrays · render as multi · merge teams · widen ROI band
+  const [gymTypeRaw, sizeRaw, problemRaw] = state.configChoices;
   const typeNames = { pt_studio:'PT / Personal Training Studio', crossfit:'CrossFit Box', maa:'Martial Arts Academy', commercial:'Commercial Gym', yoga:'Yoga / Pilates Studio', bootcamp:'Bootcamp / Outdoor Fitness', classes:'Group Classes / Studio', swimming:'Swimming / Aquatics', recovery:'Recovery / Wellness Add-ons' };
   const sizeNames = { solo:'Solo Operator', small:'Small Team (2-5)', medium:'Medium (6-15)', large:'Large (15+)' };
   const problemNames = { leads:'Lead Generation', followup:'Lead Conversion', retention:'Member Retention', content:'Content & Social Media', admin:'Admin Automation', all:'Full Team' };
 
-  // gymType is now an array (multi-select) · render as a labelled list · keep backward-compat with string saves
-  const gymTypes = Array.isArray(gymTypeRaw) ? gymTypeRaw : (gymTypeRaw ? [gymTypeRaw] : []);
-  const gymTypeLabel = gymTypes.length === 0 ? '—'
-                     : gymTypes.length === 1 ? (typeNames[gymTypes[0]] || gymTypes[0])
-                     : gymTypes.map(t => typeNames[t] || t).join(' + ');
-  const gymType = gymTypes[0] || ''; // primary type for downstream legacy lookups
+  // every step is now an array (multi-select) · backward-compat with old single-value saves
+  const toArr = v => Array.isArray(v) ? v : (v ? [v] : []);
+  const gymTypes = toArr(gymTypeRaw);
+  const sizes    = toArr(sizeRaw);
+  const problems = toArr(problemRaw);
+
+  const labelList = (arr, names, joiner) => arr.length === 0 ? '—'
+                  : arr.length === 1 ? (names[arr[0]] || arr[0])
+                  : arr.map(x => names[x] || x).join(joiner);
+
+  const gymTypeLabel = labelList(gymTypes, typeNames, ' + ');
+  const sizeLabel    = labelList(sizes,    sizeNames, ' + ');
+  const problemLabel = labelList(problems, problemNames, ' + ');
 
   const priorityTeam = {
-    leads: ['Omega (routing)', 'Front Desk', 'Marketing Coordinator', 'Content Manager'],
-    followup: ['Omega (routing)', 'Sales Assistant', 'Front Desk', 'Receptionist'],
+    leads:     ['Omega (routing)', 'Front Desk', 'Marketing Coordinator', 'Content Manager'],
+    followup:  ['Omega (routing)', 'Sales Assistant', 'Front Desk', 'Receptionist'],
     retention: ['Omega (routing)', 'Retention Specialist', 'Admin Assistant', 'Receptionist'],
-    content: ['Omega (routing)', 'Content Manager', 'Marketing Coordinator', 'Performance Analyst'],
-    admin: ['Omega (routing)', 'Admin Assistant', 'Receptionist', 'Performance Analyst'],
-    all: ['Omega + All 8 Specialists']
+    content:   ['Omega (routing)', 'Content Manager', 'Marketing Coordinator', 'Performance Analyst'],
+    admin:     ['Omega (routing)', 'Admin Assistant', 'Receptionist', 'Performance Analyst'],
+    all:       ['Omega + All 8 Specialists']
   };
 
   const roiEstimates = {
-    solo: { min: 500, max: 1500 },
-    small: { min: 800, max: 2000 },
+    solo:   { min: 500,  max: 1500 },
+    small:  { min: 800,  max: 2000 },
     medium: { min: 1500, max: 3000 },
-    large: { min: 2000, max: 5000 }
+    large:  { min: 2000, max: 5000 }
   };
 
-  const roi = roiEstimates[size] || roiEstimates.solo;
-  const team = priorityTeam[problem] || priorityTeam.all;
+  // multi-problem: union team members, dedupe, keep Omega first
+  const teamSet = new Set();
+  (problems.length ? problems : ['all']).forEach(p => (priorityTeam[p] || []).forEach(m => teamSet.add(m)));
+  const team = [...teamSet];
+
+  // multi-size: widest band — min of all mins, max of all maxes (covers seasonal / multi-site spread)
+  const roiList = (sizes.length ? sizes : ['solo']).map(s => roiEstimates[s] || roiEstimates.solo);
+  const roi = { min: Math.min(...roiList.map(r => r.min)), max: Math.max(...roiList.map(r => r.max)) };
+
+  // package recommendation: largest size selected wins
+  const sizeOrder = ['solo','small','medium','large'];
+  const largestSize = sizes.length ? sizes.reduce((a,b) => sizeOrder.indexOf(a) > sizeOrder.indexOf(b) ? a : b) : 'solo';
+  const pkg = largestSize === 'solo' ? 'Lite' : largestSize === 'large' ? 'Enterprise' : 'Pro';
 
   document.getElementById('configResult').innerHTML = `
     <h4>Your Custom GymOps Setup</h4>
@@ -2776,12 +2800,12 @@ function buildConfigResult() {
       <span class="config-result-value">${gymTypeLabel}</span>
     </div>
     <div class="config-result-row">
-      <span class="config-result-label">Team Size</span>
-      <span class="config-result-value">${sizeNames[size] || size}</span>
+      <span class="config-result-label">${sizes.length > 1 ? 'Size Profile' : 'Team Size'}</span>
+      <span class="config-result-value">${sizeLabel}</span>
     </div>
     <div class="config-result-row">
-      <span class="config-result-label">Priority Focus</span>
-      <span class="config-result-value">${problemNames[problem] || problem}</span>
+      <span class="config-result-label">${problems.length > 1 ? 'Priority Areas' : 'Priority Focus'}</span>
+      <span class="config-result-value">${problemLabel}</span>
     </div>
     <div class="config-result-row">
       <span class="config-result-label">Key Team Members</span>
@@ -2798,8 +2822,8 @@ function buildConfigResult() {
     <div style="margin-top:20px;padding:16px;background:rgba(34,165,88,0.1);border-radius:8px;border:1px solid rgba(34,165,88,0.2);">
       <div style="font-weight:700;color:#22a558;margin-bottom:4px;">Recommendation</div>
       <div style="font-size:0.88rem;color:rgba(255,255,255,0.8);">
-        Based on your ${gymTypeLabel === '—' ? 'gym' : gymTypeLabel.toLowerCase()} setup with ${sizeNames[size] || 'your team'} focusing on ${(problemNames[problem] || 'growth').toLowerCase()},
-        we recommend starting with the ${size === 'solo' ? 'Lite' : size === 'large' ? 'Enterprise' : 'Pro'} package.
+        Based on your ${gymTypeLabel === '—' ? 'gym' : gymTypeLabel.toLowerCase()} setup at ${sizeLabel === '—' ? 'your scale' : sizeLabel.toLowerCase()} focusing on ${problemLabel === '—' ? 'growth' : problemLabel.toLowerCase()},
+        we recommend starting with the ${pkg} package.
         Try the demo below to see your AI team in action.
       </div>
     </div>
@@ -2905,10 +2929,10 @@ const OB_MODULES = [
       'Hand over admin login to client'
     ],
     providers:[
-      { id:'brevo', name:'Brevo', cost:'free → £12/mo', recommended:true, note:'cheap · 300/day free · best starter' },
-      { id:'mailchimp', name:'Mailchimp', cost:'£11+ /mo (scales hard)', note:'expensive at volume' },
-      { id:'convertkit', name:'Kit / ConvertKit', cost:'free → £25/mo', note:'creator-focused' },
-      { id:'activecampaign', name:'ActiveCampaign', cost:'£15+/mo', note:'automation-heavy' }
+      { id:'brevo', name:'Brevo', cost:'free → $15/mo', recommended:true, note:'cheap · 300/day free · best starter' },
+      { id:'mailchimp', name:'Mailchimp', cost:'$14+ /mo (scales hard)', note:'expensive at volume' },
+      { id:'convertkit', name:'Kit / ConvertKit', cost:'free → $31/mo', note:'creator-focused' },
+      { id:'activecampaign', name:'ActiveCampaign', cost:'$19+/mo', note:'automation-heavy' }
     ]
   },
   { id:'social', phase:1, icon:'📱', title:'Social Media Automation', owner:'ζ Marketing Coordinator',
@@ -2932,9 +2956,9 @@ const OB_MODULES = [
       'Weekly review meeting · adjust based on what worked'
     ],
     providers:[
-      { id:'buffer', name:'Buffer', cost:'free → £6/mo', recommended:true, note:'simplest scheduling' },
-      { id:'later', name:'Later', cost:'£17+/mo', note:'visual calendar · Instagram-first' },
-      { id:'hootsuite', name:'Hootsuite', cost:'£89+/mo', note:'overkill for one gym' },
+      { id:'buffer', name:'Buffer', cost:'free → $7.5/mo', recommended:true, note:'simplest scheduling' },
+      { id:'later', name:'Later', cost:'$21+/mo', note:'visual calendar · Instagram-first' },
+      { id:'hootsuite', name:'Hootsuite', cost:'$111+/mo', note:'overkill for one gym' },
       { id:'gymos-builtin', name:'GymOps Content tab', cost:'included', note:'caption + image gen · still needs scheduler' }
     ]
   },
@@ -2958,7 +2982,7 @@ const OB_MODULES = [
     ],
     providers:[
       { id:'gymos-builtin', name:'GymOps Content tab', cost:'included', recommended:true, note:'already built · uses your API key' },
-      { id:'claude-api', name:'Direct Anthropic key', cost:'~£0.01-0.10/post', note:'cheapest at volume · gym pays' }
+      { id:'claude-api', name:'Direct Anthropic key', cost:'~$0.013-0.10/post', note:'cheapest at volume · gym pays' }
     ]
   },
 
@@ -2986,10 +3010,10 @@ const OB_MODULES = [
       'Monitor first week · tune responses'
     ],
     providers:[
-      { id:'twilio', name:'Twilio', cost:'£0.04-0.10/msg + £20/mo platform', recommended:true, note:'most reliable · per-conversation fees' },
+      { id:'twilio', name:'Twilio', cost:'$0.05-0.10/msg + $25/mo platform', recommended:true, note:'most reliable · per-conversation fees' },
       { id:'360dialog', name:'360Dialog', cost:'€49+/mo + Meta fees', note:'official Meta partner · simpler pricing' },
-      { id:'wati', name:'WATI', cost:'£35+/mo', note:'no-code UI · good for non-devs' },
-      { id:'gupshup', name:'Gupshup', cost:'£0.005-0.05/msg', note:'cheap at scale' }
+      { id:'wati', name:'WATI', cost:'$44+/mo', note:'no-code UI · good for non-devs' },
+      { id:'gupshup', name:'Gupshup', cost:'$0.006-0.05/msg', note:'cheap at scale' }
     ]
   },
   { id:'crm', phase:2, icon:'📋', title:'CRM / Lead Management', owner:'η Admin Assistant',
@@ -3013,10 +3037,10 @@ const OB_MODULES = [
       'Hand over admin access'
     ],
     providers:[
-      { id:'gohighlevel', name:'GoHighLevel', cost:'£82+/mo (SaaS mode)', recommended:true, note:'all-in-one · CRM + SMS + email + funnels' },
-      { id:'hubspot', name:'HubSpot', cost:'free → £41+/mo', note:'free tier works for small gyms' },
-      { id:'airtable', name:'Airtable', cost:'£8+/mo', note:'spreadsheet-feel · cheaper · less automation' },
-      { id:'pipedrive', name:'Pipedrive', cost:'£12+/mo', note:'sales-pipeline focused' }
+      { id:'gohighlevel', name:'GoHighLevel', cost:'$102+/mo (SaaS mode)', recommended:true, note:'all-in-one · CRM + SMS + email + funnels' },
+      { id:'hubspot', name:'HubSpot', cost:'free → $51+/mo', note:'free tier works for small gyms' },
+      { id:'airtable', name:'Airtable', cost:'$10+/mo', note:'spreadsheet-feel · cheaper · less automation' },
+      { id:'pipedrive', name:'Pipedrive', cost:'$15+/mo', note:'sales-pipeline focused' }
     ]
   },
   { id:'booking', phase:2, icon:'📅', title:'Class Booking / Scheduling', owner:'η Admin Assistant',
@@ -3037,11 +3061,11 @@ const OB_MODULES = [
       'Capacity alerts → social media (post when classes near full)'
     ],
     providers:[
-      { id:'existing', name:'Keep existing', cost:'£0', recommended:true, note:'integrate · don\'t migrate · less risk' },
-      { id:'mindbody', name:'Mindbody', cost:'£100+/mo', note:'industry standard · pricey' },
-      { id:'zenplanner', name:'ZenPlanner', cost:'£100+/mo', note:'gym-specific · martial arts strong' },
-      { id:'pushpress', name:'PushPress', cost:'£99+/mo', note:'CrossFit / strength gyms' },
-      { id:'calendly', name:'Calendly', cost:'free → £10/mo', note:'1-on-1 trials only · not classes' }
+      { id:'existing', name:'Keep existing', cost:'$0', recommended:true, note:'integrate · don\'t migrate · less risk' },
+      { id:'mindbody', name:'Mindbody', cost:'$125+/mo', note:'industry standard · pricey' },
+      { id:'zenplanner', name:'ZenPlanner', cost:'$125+/mo', note:'gym-specific · martial arts strong' },
+      { id:'pushpress', name:'PushPress', cost:'$124+/mo', note:'CrossFit / strength gyms' },
+      { id:'calendly', name:'Calendly', cost:'free → $12/mo', note:'1-on-1 trials only · not classes' }
     ]
   },
 
@@ -3068,10 +3092,10 @@ const OB_MODULES = [
       'Set max-cost guardrail (£X/mo cap before fallback to voicemail)'
     ],
     providers:[
-      { id:'vapi', name:'VAPI', cost:'£0.05-0.15/min', recommended:true, note:'most flexible · dev-friendly' },
-      { id:'bland', name:'Bland AI', cost:'£0.07/min', note:'easier setup · less customisation' },
-      { id:'retell', name:'Retell AI', cost:'£0.06/min + £20/mo', note:'good quality · CRM integrations built-in' },
-      { id:'elevenlabs', name:'ElevenLabs Agents', cost:'£0.10+/min', note:'best voice quality · pricier' }
+      { id:'vapi', name:'VAPI', cost:'$0.062-0.15/min', recommended:true, note:'most flexible · dev-friendly' },
+      { id:'bland', name:'Bland AI', cost:'$0.088/min', note:'easier setup · less customisation' },
+      { id:'retell', name:'Retell AI', cost:'$0.075/min + $25/mo', note:'good quality · CRM integrations built-in' },
+      { id:'elevenlabs', name:'ElevenLabs Agents', cost:'$0.125+/min', note:'best voice quality · pricier' }
     ]
   },
   { id:'retention', phase:3, icon:'💪', title:'Retention Automation', owner:'δ Retention Specialist',
