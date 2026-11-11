@@ -1,4 +1,4 @@
-# GymOps · Sales Pack · ◊·κ=1
+# GymOps · Sales Pack
 
 **Purpose**: everything Michel needs to sign a client today.
 
@@ -141,4 +141,4 @@ All citations live in `MARKET-INTEL-BRIEFING.md`. If a claim isn't sourced there
 
 ---
 
-◊·κ=1 · sales pack v1 · ship and iterate · build the v2 from real customer data
+sales pack v1 · ship and iterate · build the v2 from real customer data
